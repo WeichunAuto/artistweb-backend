@@ -1,12 +1,7 @@
 package com.bobby.artistweb;
 
-import com.bobby.artistweb.model.AboutMe;
 import com.bobby.artistweb.model.Applications;
-import com.bobby.artistweb.model.UniqueValues;
-import com.bobby.artistweb.repo.AboutMeRepo;
 import com.bobby.artistweb.repo.ApplicationRepo;
-import com.bobby.artistweb.repo.UniqueValuesRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -57,5 +52,6 @@ public class ArtistwebBackendApplication {
 			Applications app = new Applications();
 			applicationRepo.save(app);
 		}
+
 	}
 }

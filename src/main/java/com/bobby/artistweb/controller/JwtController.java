@@ -40,7 +40,9 @@ public class JwtController {
             JwtObject jwtObject = this.jwtService.generateToken(app.getAppName());
             System.out.println(jwtObject);
             return jwtObject;
-        } else
+        } else {
+            System.out.println("authentication faild!");
             return new JwtObject();
+        }
     }
 }

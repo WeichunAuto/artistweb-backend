@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     // Set Set the validity period of the token
-    public static final long TOKEN_EXPIRE_TIME_Millis = 1000*60*5;
+    public static final long TOKEN_EXPIRE_TIME_Millis = 1000*60*60;
 
     @Autowired
     private ApplicationDetailsService userDetailsService;

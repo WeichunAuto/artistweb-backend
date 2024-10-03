@@ -47,7 +47,7 @@ public class JwtController {
                 System.out.println("authentication faild!");
             }
         } catch(BadCredentialsException e) {
-            System.out.println("Invalid credentialsssss: " + e.getMessage());
+            System.out.println("Invalid credentials: " + e.getMessage());
             return new ResponseEntity<>(new JwtObject(), HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(new JwtObject(), HttpStatus.UNAUTHORIZED);

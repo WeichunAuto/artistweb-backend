@@ -3,6 +3,7 @@ package com.bobby.artistweb.filter;
 
 import com.bobby.artistweb.service.ApplicationDetailsService;
 import com.bobby.artistweb.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,6 +46,9 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch(SignatureException e) {
                 isValidToken = false;
                 System.out.println("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
+            } catch(ExpiredJwtException e) {
+                isValidToken = false;
+                System.out.println("JWT is expired.");
             }
         }
         // validate jwt token

@@ -8,7 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -31,18 +34,22 @@ public class JwtController {
     JwtService jwtService;
 
     @PostMapping("login")
-    public JwtObject login(@RequestBody Applications app) {
-         //Authenticate Appkey
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(app.getAppName(), app.getAppKey()));
+    public ResponseEntity<?> login(@RequestBody Applications app) {
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(app.getAppName(), app.getAppKey()));
 
-        if (authentication.isAuthenticated()) {
-            JwtObject jwtObject = this.jwtService.generateToken(app.getAppName());
-            System.out.println(jwtObject);
-            return jwtObject;
-        } else {
-            System.out.println("authentication faild!");
-            return new JwtObject();
+            if (authentication.isAuthenticated()) {
+                JwtObject jwtObject = this.jwtService.generateToken(app.getAppName());
+                System.out.println(jwtObject);
+                return new ResponseEntity<>(jwtObject, HttpStatus.OK);
+            } else {
+                System.out.println("authentication faild!");
+            }
+        } catch(BadCredentialsException e) {
+            System.out.println("Invalid credentialsssss: " + e.getMessage());
+            return new ResponseEntity<>(new JwtObject(), HttpStatus.UNAUTHORIZED);
         }
+        return new ResponseEntity<>(new JwtObject(), HttpStatus.UNAUTHORIZED);
     }
 }

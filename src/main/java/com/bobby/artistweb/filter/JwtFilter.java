@@ -3,6 +3,7 @@ package com.bobby.artistweb.filter;
 
 import com.bobby.artistweb.service.ApplicationDetailsService;
 import com.bobby.artistweb.service.JwtService;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,26 +33,39 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        boolean isValidToken = true;
         String authHeader = request.getHeader("Authorization");
         String jwtToken = null;
         String username = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwtToken = authHeader.substring(7);
-            username = this.jwtService.extractAppName(jwtToken);
+            try {
+                jwtToken = authHeader.substring(7);
+                username = this.jwtService.extractAppName(jwtToken);
+            } catch(SignatureException e) {
+                isValidToken = false;
+                System.out.println("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
+            }
         }
         // validate jwt token
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.context.getBean(ApplicationDetailsService.class).loadUserByUsername(username);
 
-            //success
-            if(this.jwtService.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            try {
+                //success
+                if(this.jwtService.validateToken(jwtToken, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (SignatureException e) {
+                isValidToken = false;
+                System.out.println("Invalid JWT signature");
             }
+
         }
+        request.setAttribute("isValidToken", isValidToken);
         filterChain.doFilter(request, response);
     }
 }

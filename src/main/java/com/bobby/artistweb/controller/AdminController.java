@@ -3,6 +3,7 @@ package com.bobby.artistweb.controller;
 import com.bobby.artistweb.model.PaintWork;
 import com.bobby.artistweb.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,13 +27,11 @@ public class AdminController {
     @PostMapping("/isTokenValid")
     public ResponseEntity<String> isTokenValid(HttpServletRequest request){
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(isValidToken){
-            System.out.println("Token verify passed.");
-            return ResponseEntity.ok("Token verify passed.");
-        } else {
+        if(!isValidToken){
             System.out.println("Token verify failed.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token verify failed.");
         }
+        return ResponseEntity.ok("Token verify passed.");
     }
 
     @PostMapping(value="/addPaintWork")
@@ -39,16 +39,13 @@ public class AdminController {
     public ResponseEntity<?> addPaintWork(@RequestPart(value="paintWork") PaintWork paintWork,
                                           @RequestPart MultipartFile imageFile, HttpServletRequest request) {
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(isValidToken){
-            System.out.println("Token verify passed.");
-        } else {
-            System.out.println("Token verify failed.");
+        if(!isValidToken){
+            System.out.println("addPaintWork: Token verify failed.");
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
 
         PaintWork savedPaintWork = null;
         try {
-            System.out.println(imageFile.getSize());
             savedPaintWork = this.adminService.addPaintWork(paintWork, imageFile);
             return new ResponseEntity<>(savedPaintWork, HttpStatus.CREATED);
         } catch (IOException e) {
@@ -57,5 +54,18 @@ public class AdminController {
             System.out.println("Max upload size exceeded........");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/fetchPaintWorks")
+    @ResponseBody
+    public ResponseEntity<List<PaintWork>> fetchPaintWorks(HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("fetchPaintWorks: Token verify failed.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<PaintWork> paintWorksList = this.adminService.fetchAllPaintWorks();
+
+        return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
     }
 }

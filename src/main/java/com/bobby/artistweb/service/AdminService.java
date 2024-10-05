@@ -43,4 +43,8 @@ public class AdminService {
 
         return paintWorkList;
     }
+
+    public PaintWork getPaintWorkById(int id) {
+        return this.paintWorkRepo.findById(id).orElse(new PaintWork(-1));
+    }
 }

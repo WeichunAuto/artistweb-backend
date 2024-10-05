@@ -36,4 +36,8 @@ public class PaintWork {
     private String imageName;
     private String imageType;
 
+    public PaintWork(int id) {
+        this.id = id;
+    }
+
 }

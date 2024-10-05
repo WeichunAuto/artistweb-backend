@@ -68,4 +68,38 @@ public class AdminController {
 
         return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
     }
+
+    @GetMapping("/getAPaintWork/{id}/image")
+    public ResponseEntity<byte[]> getAPaintWork(@PathVariable int id) {
+        System.out.println("getAPaintWork: " + id);
+        PaintWork paintWork = this.adminService.getPaintWorkById(id);
+        if (paintWork != null && paintWork.getImageData() != null) {
+            // Determine the content type based on the imageType field
+            String imageType = paintWork.getImageType();
+
+            MediaType mediaType;
+
+            switch (imageType.toLowerCase()) {
+                case "image/jpeg":
+                case "image:jpg":
+                    mediaType = MediaType.IMAGE_JPEG;
+                    break;
+                case "image/png":
+                    mediaType = MediaType.IMAGE_PNG;
+                    break;
+                default:
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
+                    break;
+            }
+
+            // Set the appropriate content type in the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(paintWork.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }

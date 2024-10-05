@@ -42,8 +42,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(customer -> customer.disable()); // close CSRF
         // enable security policy.
-        http.authorizeHttpRequests(request -> request.requestMatchers("users/*")
-                .permitAll()
+        http.authorizeHttpRequests(request -> request
+                .requestMatchers("users/*").permitAll()
+                .requestMatchers("users/*/*").permitAll() // permitted URL patterns.
+                .requestMatchers("users/*/*/*").permitAll()
                 .anyRequest()
                 .authenticated());
 

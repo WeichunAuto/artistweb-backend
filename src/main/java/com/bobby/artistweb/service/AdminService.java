@@ -47,4 +47,8 @@ public class AdminService {
     public PaintWork getPaintWorkById(int id) {
         return this.paintWorkRepo.findById(id).orElse(new PaintWork(-1));
     }
+
+    public void deletePaintWorkById(int id) {
+        this.paintWorkRepo.deleteById(id);
+    }
 }

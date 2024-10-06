@@ -71,11 +71,9 @@ public class AdminController {
 
     @GetMapping("/getAPaintWork/{id}/image")
     public ResponseEntity<byte[]> getAPaintWork(@PathVariable int id) {
-        System.out.println("getAPaintWork: " + id);
         PaintWork paintWork = this.adminService.getPaintWorkById(id);
         if (paintWork != null && paintWork.getImageData() != null) {
-            // Determine the content type based on the imageType field
-            String imageType = paintWork.getImageType();
+            String imageType = paintWork.getImageType(); // Determine the content type based on the imageType field
 
             MediaType mediaType;
 
@@ -91,9 +89,7 @@ public class AdminController {
                     mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
                     break;
             }
-
-            // Set the appropriate content type in the headers
-            HttpHeaders headers = new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
             headers.setContentType(mediaType);
             return new ResponseEntity<>(paintWork.getImageData(), headers, HttpStatus.OK);
         } else {
@@ -101,5 +97,20 @@ public class AdminController {
         }
     }
 
+    @DeleteMapping("/deleteAPaintWork/{id}")
+    public ResponseEntity<String> deletePaintWork(@PathVariable int id, HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("deleteAPaintWork: Token verify failed.");
+            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
+        }
 
+        PaintWork paintWork = this.adminService.getPaintWorkById(id);
+        if(paintWork.getId() == -1) {
+            return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
+        } else {
+            this.adminService.deletePaintWorkById(id);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        }
+    }
 }

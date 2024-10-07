@@ -28,8 +28,16 @@ public class PaintWork {
     private int price = 0;
     private String status = "active";
 
+    // the date when data was added.
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd-MM-yyyy")
     private Date date;
+
+    private String year ="";
+
+    @Column(nullable = true)
+    private int dimensionWidth = 0;
+    @Column(nullable = true)
+    private int dimensionHeight = 0;
 
     @Lob
     private byte[] imageData;

@@ -34,7 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        boolean isValidToken = true;
+        boolean isValidToken = false;
         String authHeader = request.getHeader("Authorization");
         String jwtToken = null;
         String username = null;
@@ -62,6 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                   isValidToken = true;
                 }
             } catch (SignatureException e) {
                 isValidToken = false;

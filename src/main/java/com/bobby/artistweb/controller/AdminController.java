@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,13 +36,13 @@ public class AdminController {
     @PostMapping(value="/addPaintWork")
     @ResponseBody
     public ResponseEntity<?> addPaintWork(@RequestPart(value="paintWork") PaintWork paintWork,
-                                          @RequestPart MultipartFile imageFile, HttpServletRequest request) {
+                                          @RequestPart MultipartFile imageFile, HttpServletRequest request) throws IOException {
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
         if(!isValidToken){
             System.out.println("addPaintWork: Token verify failed.");
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
-
+        ImageIO.read(imageFile.getInputStream());
         PaintWork savedPaintWork = null;
         try {
             savedPaintWork = this.adminService.addPaintWork(paintWork, imageFile);

@@ -2,6 +2,7 @@ package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.AboutMe;
+import com.bobby.artistweb.model.AboutMeDTO;
 import com.bobby.artistweb.model.Applications;
 import com.bobby.artistweb.model.UniqueValues;
 import com.bobby.artistweb.repo.AboutMeRepo;
@@ -70,6 +71,11 @@ public class UserService {
             previousAboutMe.setOptimizedImageType(aboutMe.getOptimizedImageType());
             this.aboutMeRepo.save(previousAboutMe);
         }
+    }
+
+    public AboutMeDTO fetchNamdAndDescInAboutMe() {
+        AboutMeDTO aboutMeDto = this.aboutMeRepo.findAboutMeOnlyNameAndDescription();
+        return aboutMeDto;
     }
 }
 

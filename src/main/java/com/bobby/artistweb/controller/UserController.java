@@ -2,6 +2,7 @@ package com.bobby.artistweb.controller;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.AboutMe;
+import com.bobby.artistweb.model.AboutMeDTO;
 import com.bobby.artistweb.model.PaintWork;
 import com.bobby.artistweb.model.UniqueValues;
 import com.bobby.artistweb.service.UserService;
@@ -40,6 +41,18 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("success", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/fetchAboutMe")
+    public ResponseEntity<AboutMeDTO> fetchAboutMe(HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("fetchAboutMe: Token verify failed.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        AboutMeDTO aboutMe = this.userService.fetchNamdAndDescInAboutMe();
+
+        return new ResponseEntity<>(aboutMe, HttpStatus.OK);
     }
 
     @PostMapping("/uniqueValues")

@@ -1,5 +1,7 @@
 package com.bobby.artistweb.utils;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -16,16 +18,16 @@ public class ImageCompressor {
 
     /**
      * Compress the input image into a jpg image.
-     * @param inputFile
-     * @param outputFile
+     * @param imageFile
      * @param compressionQuality
      * @throws IOException
      */
     // Method to compress and convert an image to JPEG format
-    public static void compressAndConvertToJpeg(File inputFile, File outputFile, float compressionQuality) throws IOException {
-        // Load the input image (can be any format supported by ImageIO, such as PNG, BMP, etc.)
-        BufferedImage image = ImageIO.read(inputFile);
-        writeToJpgImage(outputFile, compressionQuality, image);
+    public static byte[] compressAndConvertToJpeg(MultipartFile imageFile, float compressionQuality) throws IOException {
+        // Load the input image
+        BufferedImage inputImage = ImageIO.read(imageFile.getInputStream());
+        byte[] outputImageBytes = writeToJpgImage(compressionQuality, inputImage);
+        return outputImageBytes;
     }
 
     /**
@@ -47,13 +49,12 @@ public class ImageCompressor {
 
         // Generate and save the thumbnail
         BufferedImage thumbnailImage = resizeImage(image, Float.valueOf(targetThumbnailWidth).intValue(), Float.valueOf(targetThumbnailHeight).intValue()); // Resize for thumbnail
-        writeToJpgImage(outputFile, compressionQuality, thumbnailImage);
+        writeToJpgImage(compressionQuality, thumbnailImage);
     }
 
-    private static void writeToJpgImage(File outputFile, float compressionQuality, BufferedImage image) throws IOException {
-        // Use a ByteArrayOutputStream to write the compressed image
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private static byte[] writeToJpgImage(float compressionQuality, BufferedImage image) throws IOException {
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // Get a JPEG writer
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
         if (!writers.hasNext()) {
@@ -68,17 +69,14 @@ public class ImageCompressor {
             param.setCompressionQuality(compressionQuality);  // Set compression quality: 0.0 (max compression) to 1.0 (min compression)
         }
         // Write the compressed JPEG image to the output file
-        try (ImageOutputStream ios = ImageIO.createImageOutputStream(outputFile)) {
-//            try (ImageOutputStream ios = ImageIO.createImageOutputStream(baos)) {
-                writer.setOutput(ios);
-                writer.write(null, new IIOImage(image, null, null), param);
-//            }
+        try (ImageOutputStream ios = ImageIO.createImageOutputStream(baos)) {
+            writer.setOutput(ios);
+            writer.write(null, new IIOImage(image, null, null), param);
         }
         // Cleanup
         writer.dispose();
-
-        // Convert ByteArrayOutputStream to byte[]
-//        return baos.toByteArray();
+         // Convert ByteArrayOutputStream to byte[]
+        return baos.toByteArray();
     }
 
     private static BufferedImage resizeImage(BufferedImage originalImage, int newWidth, int newHeight) {
@@ -102,7 +100,7 @@ public class ImageCompressor {
         File outputImage = new File("/Users/wangweichun/Desktop/Project/ImageTest/output_compressed_" + compressionQuality + ".jpg");
         File thumbNailOutputImage = new File("/Users/wangweichun/Desktop/Project/ImageTest/output_compressed_bicubic300" + compressionQuality + "thumbNail.jpg");
 
-        ImageCompressor.compressAndConvertToJpeg(file, outputImage, compressionQuality);  // Set compression quality to 75%
+//        ImageCompressor.compressAndConvertToJpeg(file, outputImage, compressionQuality);  // Set compression quality to 75%
 //        ImageCompressor.generateThumbnails(file, thumbNailOutputImage, compressionQuality);  // Set compression quality to 75%
 
         System.out.println("Image compression and conversion completed.");

@@ -18,7 +18,18 @@ public class AboutMe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id = 0;
 
-    private String title ="";
+    private String name ="";
     @Column(columnDefinition = "TEXT")
     private String description ="";
+
+    private String imageName;
+    private String imageType;
+    @Lob
+    private byte[] imageData;
+
+    private String optimizedImageName;
+    private String optimizedImageType;
+    @Lob
+    private byte[] optimizedImageData;
+    
 }

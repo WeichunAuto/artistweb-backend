@@ -42,7 +42,6 @@ public class AdminController {
             System.out.println("addPaintWork: Token verify failed.");
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
-        ImageIO.read(imageFile.getInputStream());
         PaintWork savedPaintWork = null;
         try {
             savedPaintWork = this.adminService.addPaintWork(paintWork, imageFile);

@@ -1,14 +1,13 @@
 package com.bobby.artistweb.controller;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
-import com.bobby.artistweb.model.AboutMe;
-import com.bobby.artistweb.model.AboutMeDTO;
-import com.bobby.artistweb.model.PaintWork;
-import com.bobby.artistweb.model.UniqueValues;
+import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +52,31 @@ public class UserController {
         AboutMeDTO aboutMe = this.userService.fetchNamdAndDescInAboutMe();
 
         return new ResponseEntity<>(aboutMe, HttpStatus.OK);
+    }
+
+    @GetMapping("/getProfilePhoto/{id}/image")
+    public ResponseEntity<byte[]> getProfilePhoto(@PathVariable int id) {
+        AboutMeImageDTO aboutMeImageDTO = this.userService.fetchProfilePhotoInAboutMe(id);
+        if (aboutMeImageDTO != null && aboutMeImageDTO.getOptimizedImageData() != null) {
+            String imageType = aboutMeImageDTO.getOptimizedImageType();
+
+            MediaType mediaType;
+
+            switch (imageType.toLowerCase()) {
+                case "image/jpeg":
+                case "image:jpg":
+                    mediaType = MediaType.IMAGE_JPEG;
+                    break;
+                default:
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
+                    break;
+            }
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(aboutMeImageDTO.getOptimizedImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/uniqueValues")

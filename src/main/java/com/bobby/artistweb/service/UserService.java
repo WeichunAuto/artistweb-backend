@@ -1,10 +1,7 @@
 package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
-import com.bobby.artistweb.model.AboutMe;
-import com.bobby.artistweb.model.AboutMeDTO;
-import com.bobby.artistweb.model.Applications;
-import com.bobby.artistweb.model.UniqueValues;
+import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.repo.AboutMeRepo;
 import com.bobby.artistweb.repo.ApplicationRepo;
 import com.bobby.artistweb.repo.UniqueValuesRepo;
@@ -76,6 +73,11 @@ public class UserService {
     public AboutMeDTO fetchNamdAndDescInAboutMe() {
         AboutMeDTO aboutMeDto = this.aboutMeRepo.findAboutMeOnlyNameAndDescription();
         return aboutMeDto;
+    }
+
+    public AboutMeImageDTO fetchProfilePhotoInAboutMe(int id) {
+        AboutMeImageDTO aboutMeImageDto = this.aboutMeRepo.findAboutMeProfilePhotoById(id);
+        return aboutMeImageDto;
     }
 }
 

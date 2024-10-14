@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/createAboutMe")
     public ResponseEntity<String> createAboutMe(@RequestPart(value="aboutMe") AboutMe aboutMe,
-                                                @RequestPart MultipartFile imageFile, HttpServletRequest request) {
+                                                @RequestPart(value="imageFile", required = false ) MultipartFile imageFile, HttpServletRequest request) {
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
         if(!isValidToken){
             System.out.println("createAboutMe: Token verify failed.");
@@ -50,7 +50,9 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         AboutMeDTO aboutMe = this.userService.fetchNamdAndDescInAboutMe();
-
+        if (aboutMe == null) {
+            return new ResponseEntity<>(new AboutMeDTO(-1, "Unknown", "Unknown"), HttpStatus.OK);
+        }
         return new ResponseEntity<>(aboutMe, HttpStatus.OK);
     }
 

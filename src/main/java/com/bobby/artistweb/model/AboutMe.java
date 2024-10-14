@@ -22,14 +22,14 @@ public class AboutMe {
     @Column(columnDefinition = "TEXT")
     private String description ="";
 
-    private String imageName;
-    private String imageType;
+    private String imageName = "";
+    private String imageType = "";
     @Lob
-    private byte[] imageData;
+    private byte[] imageData =  new byte[0];
 
     private String optimizedImageName;
     private String optimizedImageType;
     @Lob
     private byte[] optimizedImageData;
-    
+
 }

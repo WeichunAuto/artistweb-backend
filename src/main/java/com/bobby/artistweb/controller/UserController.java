@@ -86,7 +86,7 @@ public class UserController {
                                            @RequestPart(value="imageFile") MultipartFile imageFile, HttpServletRequest request) {
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
         if(!isValidToken){
-            System.out.println("createAboutMe: Token verify failed.");
+            System.out.println("addTopic: Token verify failed.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
@@ -101,8 +101,47 @@ public class UserController {
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 
-    @PostMapping("/uniqueValues")
-    public List<UniqueValues> getUniqueValues() {
-        return (List<UniqueValues>) this.userService.getUniqueValues();
+    @GetMapping("/fetchTopics")
+    @ResponseBody
+    public ResponseEntity<List<TopicDTO>> fetchTopics(HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("fetchTopics: Token verify failed.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<TopicDTO> topicDtoList = this.userService.fetchTitleAndDescriptionInTopic();
+
+        return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/getATopic/{id}/image")
+    public ResponseEntity<byte[]> getATopicImage(@PathVariable int id, HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("getATopic: Token verify failed.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        TopicImageDTO topicImageDto = this.userService.fetchPhotoInTopic(id);
+
+        if (topicImageDto != null && topicImageDto.getImageData() != null) {
+            String imageType = topicImageDto.getImageType();
+
+            MediaType mediaType;
+
+            switch (imageType.toLowerCase()) {
+                case "image/jpeg":
+                case "image:jpg":
+                    mediaType = MediaType.IMAGE_JPEG;
+                    break;
+                default:
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
+                    break;
+            }
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(topicImageDto.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

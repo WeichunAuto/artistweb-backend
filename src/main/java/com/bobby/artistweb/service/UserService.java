@@ -100,5 +100,15 @@ public class UserService {
         topic.setImageData(imageFile.getBytes());
         this.topicRepo.save(topic);
     }
+
+    public List<TopicDTO> fetchTitleAndDescriptionInTopic() {
+        List<TopicDTO> topicDtos = (List<TopicDTO>) this.topicRepo.findAboutMeOnlyNameAndDescription();
+        return topicDtos;
+    }
+
+    public TopicImageDTO fetchPhotoInTopic(int id) {
+        TopicImageDTO topicImage = this.topicRepo.findTopicPhotoById(id);
+        return topicImage;
+    }
 }
 

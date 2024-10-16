@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicImageDTO {
-    private String imageName = "";
-    private String imageType = "";
+    private String optimizedImageName;
+    private String optimizedImageType;
     @Lob
-    private byte[] imageData =  new byte[0];
+    private byte[] optimizedImageData;
 
 }

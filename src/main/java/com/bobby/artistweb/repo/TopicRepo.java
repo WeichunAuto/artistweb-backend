@@ -19,6 +19,6 @@ public interface TopicRepo  extends JpaRepository<Topic, Integer> {
     List<TopicDTO> findAboutMeOnlyNameAndDescription();
 
     @Transactional(readOnly = true)
-    @Query("Select new com.bobby.artistweb.model.TopicImageDTO(t.imageName, t.imageType, t.imageData) FROM Topic t WHERE t.id = :id")
+    @Query("Select new com.bobby.artistweb.model.TopicImageDTO(t.optimizedImageName, t.optimizedImageType, t.optimizedImageData) FROM Topic t WHERE t.id = :id")
     TopicImageDTO findTopicPhotoById(@Param("id") int id);
 }

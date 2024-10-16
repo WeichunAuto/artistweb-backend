@@ -94,10 +94,18 @@ public class UserService {
         if (!contentType.toLowerCase().equals("image/jpeg")) {
             throw new ImageTypeDoesNotSupportException("Please only upload jpeg image files!");
         }
+
         String originalFilename = imageFile.getOriginalFilename();
         topic.setImageName(originalFilename);
         topic.setImageType(imageFile.getContentType());
         topic.setImageData(imageFile.getBytes());
+
+        float compressionQuality = 0.1f;
+        byte[] optimizedImageBytes = ImageCompressor.compressAndConvertToJpeg(imageFile, compressionQuality);
+        topic.setOptimizedImageName(originalFilename.substring(0, originalFilename.lastIndexOf('.'))+ "optimized.jpg");
+        topic.setOptimizedImageType("image/jpeg");
+        topic.setOptimizedImageData(optimizedImageBytes);
+
         this.topicRepo.save(topic);
     }
 
@@ -109,6 +117,10 @@ public class UserService {
     public TopicImageDTO fetchPhotoInTopic(int id) {
         TopicImageDTO topicImage = this.topicRepo.findTopicPhotoById(id);
         return topicImage;
+    }
+
+    public void deleteTopicById(int id) {
+        this.topicRepo.deleteById(id);
     }
 }
 

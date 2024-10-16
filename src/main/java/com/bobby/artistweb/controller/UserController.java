@@ -123,8 +123,8 @@ public class UserController {
         }
         TopicImageDTO topicImageDto = this.userService.fetchPhotoInTopic(id);
 
-        if (topicImageDto != null && topicImageDto.getImageData() != null) {
-            String imageType = topicImageDto.getImageType();
+        if (topicImageDto != null && topicImageDto.getOptimizedImageData() != null) {
+            String imageType = topicImageDto.getOptimizedImageType();
 
             MediaType mediaType;
 
@@ -139,9 +139,23 @@ public class UserController {
             }
             HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
             headers.setContentType(mediaType);
-            return new ResponseEntity<>(topicImageDto.getImageData(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(topicImageDto.getOptimizedImageData(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @DeleteMapping("/deleteTopic/{id}")
+    public ResponseEntity<String> deleteTopic(@PathVariable int id, HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("deleteTopic: Token verify failed.");
+            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
+        }
+
+
+        this.userService.deleteTopicById(id);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+
     }
 }

@@ -23,4 +23,9 @@ public class Topic {
     @Lob
     private byte[] imageData =  new byte[0];
 
+    private String optimizedImageName;
+    private String optimizedImageType;
+    @Lob
+    private byte[] optimizedImageData;
+
 }

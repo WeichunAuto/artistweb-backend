@@ -81,6 +81,26 @@ public class UserController {
         }
     }
 
+    @PostMapping("/addTopic")
+    public ResponseEntity<String> addTopic(@RequestPart(value="topic") Topic topic,
+                                           @RequestPart(value="imageFile") MultipartFile imageFile, HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("createAboutMe: Token verify failed.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            this.userService.saveTopic(topic, imageFile);
+        } catch (ImageTypeDoesNotSupportException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("success", HttpStatus.CREATED);
+    }
+
     @PostMapping("/uniqueValues")
     public List<UniqueValues> getUniqueValues() {
         return (List<UniqueValues>) this.userService.getUniqueValues();

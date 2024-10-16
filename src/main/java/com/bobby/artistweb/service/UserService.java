@@ -4,6 +4,7 @@ import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.repo.AboutMeRepo;
 import com.bobby.artistweb.repo.ApplicationRepo;
+import com.bobby.artistweb.repo.TopicRepo;
 import com.bobby.artistweb.repo.UniqueValuesRepo;
 import com.bobby.artistweb.utils.ImageCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class UserService {
 
     @Autowired
     private AboutMeRepo aboutMeRepo;
+
+    @Autowired
+    private TopicRepo topicRepo;
 
     @Autowired
     private ApplicationRepo applicationRepo;
@@ -83,6 +87,18 @@ public class UserService {
     public AboutMeImageDTO fetchProfilePhotoInAboutMe(int id) {
         AboutMeImageDTO aboutMeImageDto = this.aboutMeRepo.findAboutMeProfilePhotoById(id);
         return aboutMeImageDto;
+    }
+
+    public void saveTopic(Topic topic, MultipartFile imageFile) throws ImageTypeDoesNotSupportException, IOException {
+        String contentType = imageFile.getContentType();
+        if (!contentType.toLowerCase().equals("image/jpeg")) {
+            throw new ImageTypeDoesNotSupportException("Please only upload jpeg image files!");
+        }
+        String originalFilename = imageFile.getOriginalFilename();
+        topic.setImageName(originalFilename);
+        topic.setImageType(imageFile.getContentType());
+        topic.setImageData(imageFile.getBytes());
+        this.topicRepo.save(topic);
     }
 }
 

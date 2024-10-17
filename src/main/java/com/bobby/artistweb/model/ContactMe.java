@@ -1,33 +1,26 @@
 package com.bobby.artistweb.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-
 @Entity
 @Component
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class AboutMe {
-
+public class ContactMe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id = 0;
-
-    private String name ="";
+    private String firstName = "";
+    private String lastName = "";
+    private String email = "";
+    private String phoneNumber = "";
     @Column(columnDefinition = "TEXT")
-    private String description ="";
-
-    private String imageName = "";
-    private String imageType = "";
-    @Lob
-    private byte[] imageData =  new byte[0];
-
-    private String optimizedImageName;
-    private String optimizedImageType;
-    @Lob
-    private byte[] optimizedImageData;
+    private String message = "";
+    private boolean subscribe;
 
 }

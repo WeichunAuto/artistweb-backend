@@ -2,10 +2,7 @@ package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.*;
-import com.bobby.artistweb.repo.AboutMeRepo;
-import com.bobby.artistweb.repo.ApplicationRepo;
-import com.bobby.artistweb.repo.TopicRepo;
-import com.bobby.artistweb.repo.UniqueValuesRepo;
+import com.bobby.artistweb.repo.*;
 import com.bobby.artistweb.utils.ImageCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +26,9 @@ public class UserService {
 
     @Autowired
     private UniqueValuesRepo uniqueValuesRepo;
+
+    @Autowired
+    private ContactMeRepo contactMeRepo;
 
     public AboutMe getAboutMe() {
         return this.aboutMeRepo.findAll().get(0);
@@ -121,6 +121,10 @@ public class UserService {
 
     public void deleteTopicById(int id) {
         this.topicRepo.deleteById(id);
+    }
+
+    public void saveMessage(ContactMe contactMe) {
+        this.contactMeRepo.save(contactMe);
     }
 }
 

@@ -152,10 +152,19 @@ public class UserController {
             System.out.println("deleteTopic: Token verify failed.");
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
-
-
         this.userService.deleteTopicById(id);
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
 
+    @PostMapping("/sendMessage")
+    public ResponseEntity<String> sendMessage(@RequestPart ContactMe contactMe, HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("sendMessage: Token verify failed.");
+            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
+        }
+        this.userService.saveMessage(contactMe);
+        System.out.println("sendMessage: contactMe" + contactMe.isSubscribe());
+        return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 }

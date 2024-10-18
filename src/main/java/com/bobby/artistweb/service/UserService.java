@@ -3,17 +3,25 @@ package com.bobby.artistweb.service;
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.repo.*;
+import com.bobby.artistweb.utils.GmailSender;
 import com.bobby.artistweb.utils.ImageCompressor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private GmailSender gmailSender;
 
     @Autowired
     private AboutMeRepo aboutMeRepo;
@@ -123,8 +131,21 @@ public class UserService {
         this.topicRepo.deleteById(id);
     }
 
-    public void saveMessage(ContactMe contactMe) {
+    public void saveMessage(ContactMe contactMe) throws MessagingException {
         this.contactMeRepo.save(contactMe);
+
+        // start a timer schedule to send an email after 5 seconds
+        Timer timer = new Timer(false);
+        timer.schedule(new TimerTask() {
+
+            @SneakyThrows
+            @Override
+            public void run() {
+                gmailSender.setContactMe(contactMe);
+                gmailSender.sendEmail();
+                timer.cancel();
+            }
+        }, 5000);
     }
 }
 

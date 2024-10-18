@@ -1,36 +1,62 @@
 package com.bobby.artistweb.utils;
 
+import com.bobby.artistweb.config.CustomAppProperties;
+import com.bobby.artistweb.model.ContactMe;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.*;
 
+@Component
 public class GmailSender {
+
+    private CustomAppProperties customAppProperties;
 
     private Session newSession = null;
     private Message message;
 
-    private String firstName;
-    private String recipient;
-    private String messageBody;
-    private List<String> emailRecipients = new ArrayList<String>();
+    private ContactMe contactMe;
 
-    public GmailSender(String firstName, String messageBody) {
-        this.firstName = firstName;
-        this.messageBody = messageBody;
+    private List<String> emailRecipients = new ArrayList<String>();
+    private String sender;
+    private String password;
+
+    @Autowired
+    public void setCustomAppProperties(CustomAppProperties customAppProperties) {
+        this.customAppProperties = customAppProperties;
+    }
+
+    public CustomAppProperties getCustomAppProperties() {
+        return customAppProperties;
+    }
+
+    public ContactMe getContactMe() {
+        return contactMe;
+    }
+
+    public void setContactMe(ContactMe contactMe) {
+        this.contactMe = contactMe;
+    }
+
+    private void initProperties() {
+        this.sender = this.customAppProperties.getSender();
+        this.password = this.customAppProperties.getPassword();
+        this.emailRecipients.add(this.customAppProperties.getRecipient());
     }
 
     private Message draftEmail() throws MessagingException {
 
-        String emailSubject = this.firstName + " - A New Message From Artist Web";
+        String emailSubject = this.contactMe.getFirstName() + " - A New Message From Artist Web";
         String emailBody = "<div style='text-align:left;'>Hi Golnaz</div>";
         emailBody += "<div style='width:100%; height:80px; line-height:80px;'>There is a new message from artist web.</div>";
-        emailBody += "<div style='width: 100%; height:30px; line-height:30px;'>First Name: <span style='color:blue;'>Bobby</span></div>";
-        emailBody += "<div style='width: 100%; height:30px; line-height:30px;'>Email: <span style='color:blue;'>rachan0210@sina.com</span></div>";
-        emailBody += "<div style='width: 100%; height:30px; line-height:50px;'>Phone Number: <span style='color:blue'>02108589588</span></div>";
-
+        emailBody += "<div style='width: 100%; height:30px; line-height:30px;'>First Name: <span style='color:blue;'>" + this.contactMe.getFirstName() + "</span></div>";
+        emailBody += "<div style='width: 100%; height:30px; line-height:30px;'>Email: <span style='color:blue;'>" + this.contactMe.getEmail() + "</span></div>";
+        emailBody += "<div style='width: 100%; height:30px; line-height:50px;'>Phone Number: <span style='color:blue'>" + this.contactMe.getPhoneNumber() + "</span></div>";
+        emailBody += "<div style='width: 100%; height:30px; line-height:50px;'>Messages: <span style='color:blue'>" + this.contactMe.getMessage() + "</span></div>";
 
         emailBody += "<div style='margin-top:100px;'>-- Artist Web</div>";
-        this.emailRecipients.add("bobbywangwc@163.com");
 
         message = new MimeMessage(newSession);
         for (String emailRecipient : this.emailRecipients) {
@@ -50,8 +76,9 @@ public class GmailSender {
     }
 
     private void setupServerProperties() {
+        this.initProperties();
+
         Properties properties = System.getProperties();
-//        properties.setProperty("mail.smtp.host", host);
         properties.setProperty("mail.smtp.port", "587");
         properties.setProperty("mail.smtp.auth", "true");
         properties.setProperty("mail.smtp.starttls.enable", "true");
@@ -59,26 +86,28 @@ public class GmailSender {
         newSession = Session.getDefaultInstance(properties, null);
     }
 
-    private void sendEmail() throws MessagingException {
+    public void sendEmail() throws MessagingException {
         this.setupServerProperties();
         this.draftEmail();
 
-        String fromUser = "seven.wangweichun@gmail.com";
-        String fromUserPassword = "fuuu ddzy rody hzgz";
         String emailHost = "smtp.gmail.com";
         Transport transport = newSession.getTransport("smtp");
-        transport.connect(emailHost, fromUser, fromUserPassword);
+        transport.connect(emailHost, this.customAppProperties.getSender(), this.customAppProperties.getPassword());
         transport.sendMessage(message, message.getAllRecipients());
         transport.close();
         System.out.println("Email sent successfully");
     }
 
-    public static void main(String[] args) throws MessagingException {
-        GmailSender gmailSender = new GmailSender("Bobby", "");
-        gmailSender.setupServerProperties();
-        gmailSender.draftEmail();
-        gmailSender.sendEmail();
-
-    }
+//    public static void main(String[] args) throws MessagingException {
+//        GmailSender gmailSender = new GmailSender();
+//        ContactMe contactMe = new ContactMe();
+//        contactMe.setFirstName("Yolo");
+//        contactMe.setMessage("haha, here is my message body.");
+//        gmailSender.setContactMe(contactMe);
+//
+//
+//        gmailSender.sendEmail();
+//
+//    }
 }
 

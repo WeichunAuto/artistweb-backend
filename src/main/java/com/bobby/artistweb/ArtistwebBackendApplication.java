@@ -1,15 +1,22 @@
 package com.bobby.artistweb;
 
+import com.bobby.artistweb.config.CustomAppProperties;
 import com.bobby.artistweb.model.Applications;
+import com.bobby.artistweb.model.ContactMe;
 import com.bobby.artistweb.repo.ApplicationRepo;
+import com.bobby.artistweb.utils.GmailSender;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 
+import javax.mail.MessagingException;
+
 @SpringBootApplication
+@EnableConfigurationProperties(CustomAppProperties.class)
 public class ArtistwebBackendApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MessagingException {
 		ApplicationContext context = SpringApplication.run(ArtistwebBackendApplication.class, args);
 
 //		/**
@@ -52,6 +59,15 @@ public class ArtistwebBackendApplication {
 			Applications app = new Applications();
 			applicationRepo.save(app);
 		}
+
+//		GmailSender gmailSender = context.getBean(GmailSender.class);
+//		ContactMe contactMe = new ContactMe();
+//		contactMe.setFirstName("Yolo");
+//		contactMe.setMessage("haha, here is my message body.");
+//		gmailSender.setContactMe(contactMe);
+//
+//
+//		gmailSender.sendEmail();
 
 	}
 }

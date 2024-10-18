@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 
@@ -163,8 +164,11 @@ public class UserController {
             System.out.println("sendMessage: Token verify failed.");
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
-        this.userService.saveMessage(contactMe);
-        System.out.println("sendMessage: contactMe" + contactMe.isSubscribe());
+        try {
+            this.userService.saveMessage(contactMe);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 }

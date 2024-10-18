@@ -84,12 +84,19 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-imaging -->
+		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-imaging</artifactId>
-			<version>1.0-alpha3</version>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.6.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
+
 
 	</dependencies>
 

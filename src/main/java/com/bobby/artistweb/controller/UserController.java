@@ -171,4 +171,16 @@ public class UserController {
         }
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
+
+    @GetMapping("/fetchMessages")
+    @ResponseBody
+    public ResponseEntity<List<ContactMe>> fetchMessages(HttpServletRequest request) {
+        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
+        if(!isValidToken){
+            System.out.println("sendMessage: Token verify failed.");
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        List<ContactMe> messages = this.userService.getAllMessages();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
 }

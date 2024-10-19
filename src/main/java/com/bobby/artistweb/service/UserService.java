@@ -7,6 +7,7 @@ import com.bobby.artistweb.utils.GmailSender;
 import com.bobby.artistweb.utils.ImageCompressor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -132,6 +133,7 @@ public class UserService {
     }
 
     public void saveMessage(ContactMe contactMe) throws MessagingException {
+        contactMe.setDate(new Date());
         this.contactMeRepo.save(contactMe);
 
         // start a timer schedule to send an email after 5 seconds
@@ -146,6 +148,11 @@ public class UserService {
                 timer.cancel();
             }
         }, 5000);
+    }
+
+    public List<ContactMe> getAllMessages() {
+        Sort sort = Sort.by("date").descending();
+        return this.contactMeRepo.findAll(sort);
     }
 }
 

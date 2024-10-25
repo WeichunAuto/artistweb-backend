@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - bobby_network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: golna
+      POSTGRES_PASSWORD: golna
+      POSTGRES_DB: artistweb
+    ports:
+      - "5432:5432"
+    networks:
+      - bobby_network
+
+networks:
+  bobby_network:
+    driver: bridge

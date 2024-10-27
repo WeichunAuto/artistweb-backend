@@ -1,9 +1,10 @@
 package com.bobby.artistweb.controller;
 
+import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.PaintWork;
+import com.bobby.artistweb.model.PaintWorkDecorationImageDTO;
 import com.bobby.artistweb.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -35,7 +37,7 @@ public class AdminController {
     @PostMapping(value="/addPaintWork")
     @ResponseBody
     public ResponseEntity<?> addPaintWork(@RequestPart(value="paintWork") PaintWork paintWork,
-                                          @RequestPart MultipartFile imageFile, HttpServletRequest request) throws IOException {
+                                          @RequestPart MultipartFile imageFile, HttpServletRequest request) {
         boolean isValidToken = (boolean) request.getAttribute("isValidToken");
         if(!isValidToken){
             System.out.println("addPaintWork: Token verify failed.");
@@ -49,6 +51,8 @@ public class AdminController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MaxUploadSizeExceededException e) {
             System.out.println("Max upload size exceeded........");
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (ImageTypeDoesNotSupportException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -66,11 +70,11 @@ public class AdminController {
         return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
     }
 
-    @GetMapping("/getAPaintWork/{id}/image")
+    @GetMapping("/getPaintWorkCover/{id}/image")
     public ResponseEntity<byte[]> getAPaintWork(@PathVariable int id) {
-        PaintWork paintWork = this.adminService.getPaintWorkById(id);
-        if (paintWork != null && paintWork.getImageData() != null) {
-            String imageType = paintWork.getImageType(); // Determine the content type based on the imageType field
+        PaintWorkDecorationImageDTO decorationImageDTO = this.adminService.getPaintWorkCoverById(id);
+        if (decorationImageDTO != null && decorationImageDTO.getImageData() != null) {
+            String imageType = decorationImageDTO.getImageType(); // Determine the content type based on the imageType field
 
             MediaType mediaType;
 
@@ -88,7 +92,7 @@ public class AdminController {
             }
             HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
             headers.setContentType(mediaType);
-            return new ResponseEntity<>(paintWork.getImageData(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(decorationImageDTO.getImageData(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -102,8 +106,8 @@ public class AdminController {
             return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
         }
 
-        PaintWork paintWork = this.adminService.getPaintWorkById(id);
-        if(paintWork.getId() == -1) {
+        Optional<PaintWork> paintWork = this.adminService.findPaintWorkById(id);
+        if(paintWork == null || !paintWork.isPresent()) {
             return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
         } else {
             this.adminService.deletePaintWorkById(id);

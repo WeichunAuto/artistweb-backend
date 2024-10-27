@@ -18,7 +18,12 @@ services:
       - "5432:5432"
     networks:
       - bobby_network
+    volumes:
+      - postgres-artistWeb-data:/var/lib/postgresql/data
 
 networks:
   bobby_network:
     driver: bridge
+
+volumes:
+  postgres-artistWeb-data:

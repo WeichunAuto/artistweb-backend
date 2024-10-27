@@ -5,12 +5,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
-@Component
 @Entity
 @Data
 @AllArgsConstructor
@@ -28,24 +26,17 @@ public class PaintWork {
     private int price = 0;
     private String status = "active";
 
-    // the date when data was added.
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd-MM-yyyy")
     private Date date;
 
     private String year ="";
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int dimensionWidth = 0;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int dimensionHeight = 0;
 
-    @Lob
-    private byte[] imageData;
-    private String imageName;
-    private String imageType;
-
-    public PaintWork(int id) {
-        this.id = id;
-    }
+//    @OneToMany(mappedBy = "paintWork", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<PaintWorkDecoration> decorations;
 
 }

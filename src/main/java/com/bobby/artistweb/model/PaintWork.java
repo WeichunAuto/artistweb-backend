@@ -39,4 +39,8 @@ public class PaintWork {
 //    @OneToMany(mappedBy = "paintWork", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
 //    private List<PaintWorkDecoration> decorations;
 
+    public PaintWork(int id) {
+        this.id = id;
+    }
+
 }

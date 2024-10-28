@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This filter used to validate the validity of token.
@@ -46,9 +49,11 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch(SignatureException e) {
                 isValidToken = false;
                 System.out.println("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
+                this.handleException(response, "JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
             } catch(ExpiredJwtException e) {
                 isValidToken = false;
                 System.out.println("JWT is expired.");
+                this.handleException(response, "JWT is expired.");
             }
         }
         // validate jwt token
@@ -67,10 +72,40 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (SignatureException e) {
                 isValidToken = false;
                 System.out.println("Invalid JWT signature");
+                this.handleException(response, "Invalid JWT signature.");
             }
-
         }
         request.setAttribute("isValidToken", isValidToken);
         filterChain.doFilter(request, response);
+    }
+
+    private void handleException(HttpServletResponse response, String message) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Credentials", "false");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        PrintWriter writer = null;
+        OutputStreamWriter osw = null;
+
+        try {
+            osw = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+            writer = new PrintWriter(osw, true);
+            writer.write(message);
+            writer.flush();
+            writer.close();
+            osw.close();
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage(), e);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            if (null != writer) {
+                writer.close();
+            }
+            if (null != osw) {
+                osw.close();
+            }
+        }
     }
 }

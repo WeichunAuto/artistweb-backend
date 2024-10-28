@@ -74,4 +74,26 @@ public class AdminService {
         this.decorationRepo.deleteDecorationsByPaintWorkId(id);
         this.paintWorkRepo.deleteById(id);
     }
+
+    public void saveDecoration(int paintWorkId, MultipartFile imageFile) throws ImageTypeDoesNotSupportException, IOException {
+        String contentType = imageFile.getContentType();
+        if (!contentType.toLowerCase().equals("image/jpeg")) {
+            throw new ImageTypeDoesNotSupportException("Please only upload jpeg image files!");
+        }
+
+        PaintWorkDecoration decoration = new PaintWorkDecoration();
+        decoration.setImageName(imageFile.getOriginalFilename());
+        decoration.setImageType(imageFile.getContentType());
+        decoration.setImageData(imageFile.getBytes());
+
+//        float compressionQuality = 0.25f;
+//        byte[] optimizedImageBytes = ImageCompressor.compressAndConvertToJpeg(imageFile, compressionQuality);
+//        decoration.setOptimizedImageData(optimizedImageBytes);
+//        decoration.setCover(false);
+//
+//        PaintWork paintWork = new PaintWork(paintWorkId);
+//        decoration.setPaintWork(paintWork);
+//
+//        this.decorationRepo.save(decoration);
+    }
 }

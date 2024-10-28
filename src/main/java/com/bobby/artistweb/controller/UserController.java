@@ -26,11 +26,6 @@ public class UserController {
     @PostMapping("/createAboutMe")
     public ResponseEntity<String> createAboutMe(@RequestPart(value="aboutMe") AboutMe aboutMe,
                                                 @RequestPart(value="imageFile", required = false ) MultipartFile imageFile, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("createAboutMe: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         try {
             this.userService.saveAboutMe(aboutMe, imageFile);
         } catch (IOException e) {
@@ -45,11 +40,6 @@ public class UserController {
 
     @GetMapping("/fetchAboutMe")
     public ResponseEntity<AboutMeDTO> fetchAboutMe(HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("fetchAboutMe: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         AboutMeDTO aboutMe = this.userService.fetchNamdAndDescInAboutMe();
         if (aboutMe == null) {
             return new ResponseEntity<>(new AboutMeDTO(-1, "Unknown", "Unknown"), HttpStatus.OK);
@@ -85,11 +75,6 @@ public class UserController {
     @PostMapping("/addTopic")
     public ResponseEntity<String> addTopic(@RequestPart(value="topic") Topic topic,
                                            @RequestPart(value="imageFile") MultipartFile imageFile, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("addTopic: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         try {
             this.userService.saveTopic(topic, imageFile);
         } catch (ImageTypeDoesNotSupportException e) {
@@ -105,11 +90,6 @@ public class UserController {
     @GetMapping("/fetchTopics")
     @ResponseBody
     public ResponseEntity<List<TopicDTO>> fetchTopics(HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("fetchTopics: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         List<TopicDTO> topicDtoList = this.userService.fetchTitleAndDescriptionInTopic();
 
         return new ResponseEntity<>(topicDtoList, HttpStatus.OK);
@@ -117,11 +97,6 @@ public class UserController {
 
     @GetMapping("/getATopic/{id}/image")
     public ResponseEntity<byte[]> getATopicImage(@PathVariable int id, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("getATopic: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         TopicImageDTO topicImageDto = this.userService.fetchPhotoInTopic(id);
 
         if (topicImageDto != null && topicImageDto.getOptimizedImageData() != null) {
@@ -148,22 +123,12 @@ public class UserController {
 
     @DeleteMapping("/deleteTopic/{id}")
     public ResponseEntity<String> deleteTopic(@PathVariable int id, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("deleteTopic: Token verify failed.");
-            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
-        }
         this.userService.deleteTopicById(id);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @PostMapping("/sendMessage")
     public ResponseEntity<String> sendMessage(@RequestPart ContactMe contactMe, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("sendMessage: Token verify failed.");
-            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
-        }
         try {
             this.userService.saveMessage(contactMe);
         } catch (MessagingException e) {
@@ -175,11 +140,6 @@ public class UserController {
     @GetMapping("/fetchMessages")
     @ResponseBody
     public ResponseEntity<List<ContactMe>> fetchMessages(HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("sendMessage: Token verify failed.");
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
         List<ContactMe> messages = this.userService.getAllMessages();
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }

@@ -26,11 +26,6 @@ public class AdminController {
 
     @PostMapping("/isTokenValid")
     public ResponseEntity<String> isTokenValid(HttpServletRequest request){
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("Token verify failed.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token verify failed.");
-        }
         return ResponseEntity.ok("Token verify passed.");
     }
 
@@ -38,11 +33,7 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<?> addPaintWork(@RequestPart(value="paintWork") PaintWork paintWork,
                                           @RequestPart MultipartFile imageFile, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("addPaintWork: Token verify failed.");
-            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
-        }
+
         PaintWork savedPaintWork = null;
         try {
             savedPaintWork = this.adminService.addPaintWork(paintWork, imageFile);
@@ -60,11 +51,7 @@ public class AdminController {
     @GetMapping("/fetchPaintWorks")
     @ResponseBody
     public ResponseEntity<List<PaintWork>> fetchPaintWorks(HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("fetchPaintWorks: Token verify failed.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+
         List<PaintWork> paintWorksList = this.adminService.fetchAllPaintWorks();
 
         return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
@@ -100,12 +87,6 @@ public class AdminController {
 
     @DeleteMapping("/deleteAPaintWork/{id}")
     public ResponseEntity<String> deletePaintWork(@PathVariable int id, HttpServletRequest request) {
-        boolean isValidToken = (boolean) request.getAttribute("isValidToken");
-        if(!isValidToken){
-            System.out.println("deleteAPaintWork: Token verify failed.");
-            return new ResponseEntity<>("inValidToken", HttpStatus.UNAUTHORIZED);
-        }
-
         Optional<PaintWork> paintWork = this.adminService.findPaintWorkById(id);
         if(paintWork == null || !paintWork.isPresent()) {
             return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
@@ -113,5 +94,19 @@ public class AdminController {
             this.adminService.deletePaintWorkById(id);
             return new ResponseEntity<>("success", HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/addDecoration/{paintWorkId}")
+    public ResponseEntity<String> addDecoration(@PathVariable int paintWorkId, @RequestPart(value="imageFile") MultipartFile imageFile) {
+        try {
+            this.adminService.saveDecoration(paintWorkId, imageFile);
+        } catch (ImageTypeDoesNotSupportException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
 }

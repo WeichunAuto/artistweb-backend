@@ -49,11 +49,11 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch(SignatureException e) {
                 isValidToken = false;
                 System.out.println("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
-                this.handleException(response, "JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
+                this.returnTokenInvalidResponse(response, "JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
             } catch(ExpiredJwtException e) {
                 isValidToken = false;
                 System.out.println("JWT is expired.");
-                this.handleException(response, "JWT is expired.");
+                this.returnTokenInvalidResponse(response, "JWT is expired.");
             }
         }
         // validate jwt token
@@ -72,14 +72,14 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (SignatureException e) {
                 isValidToken = false;
                 System.out.println("Invalid JWT signature");
-                this.handleException(response, "Invalid JWT signature.");
+                this.returnTokenInvalidResponse(response, "Invalid JWT signature.");
             }
         }
         request.setAttribute("isValidToken", isValidToken);
         filterChain.doFilter(request, response);
     }
 
-    private void handleException(HttpServletResponse response, String message) throws IOException {
+    private void returnTokenInvalidResponse(HttpServletResponse response, String message) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         response.setHeader("Access-Control-Allow-Origin", "*");

@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     // Set Set the validity period of the token
-    public static final long TOKEN_EXPIRE_TIME_Millis = 1000*60*1;
+    public static final long TOKEN_EXPIRE_TIME_Millis = 1000*60*60;
 
     @Autowired
     private ApplicationDetailsService userDetailsService;

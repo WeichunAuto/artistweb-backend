@@ -86,14 +86,14 @@ public class AdminService {
         decoration.setImageType(imageFile.getContentType());
         decoration.setImageData(imageFile.getBytes());
 
-//        float compressionQuality = 0.25f;
-//        byte[] optimizedImageBytes = ImageCompressor.compressAndConvertToJpeg(imageFile, compressionQuality);
-//        decoration.setOptimizedImageData(optimizedImageBytes);
-//        decoration.setCover(false);
-//
-//        PaintWork paintWork = new PaintWork(paintWorkId);
-//        decoration.setPaintWork(paintWork);
-//
-//        this.decorationRepo.save(decoration);
+        float compressionQuality = 0.25f;
+        byte[] optimizedImageBytes = ImageCompressor.compressAndConvertToJpeg(imageFile, compressionQuality);
+        decoration.setOptimizedImageData(optimizedImageBytes);
+        decoration.setCover(false);
+
+        PaintWork paintWork = new PaintWork(paintWorkId);
+        decoration.setPaintWork(paintWork);
+
+        this.decorationRepo.save(decoration);
     }
 }

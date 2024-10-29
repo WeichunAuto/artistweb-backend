@@ -1,5 +1,6 @@
 package com.bobby.artistweb.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaintWorkDecorationImageDTO {
+public class PaintWorkDecorationDTO {
+
     private int id = 0;
 
-    private byte[] imageData;
+    private String imageName;
+    private String imageType;
+
+    private boolean cover;
+
 
 }

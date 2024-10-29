@@ -1,9 +1,7 @@
 package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
-import com.bobby.artistweb.model.PaintWork;
-import com.bobby.artistweb.model.PaintWorkDecoration;
-import com.bobby.artistweb.model.PaintWorkDecorationImageDTO;
+import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.repo.PaintWorkDecorationRepo;
 import com.bobby.artistweb.repo.PaintWorkRepo;
 import com.bobby.artistweb.utils.ImageCompressor;
@@ -14,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -53,9 +53,30 @@ public class AdminService {
         return savedPaintWork;
     }
 
-    public List<PaintWork> fetchAllPaintWorks() {
-        Sort sort = Sort.by("status").ascending().and(Sort.by("date").descending());
-        List<PaintWork> paintWorkList = this.paintWorkRepo.findAll(sort);
+    public List<PaintWorkDTO> fetchAllPaintWorks() {
+//        Sort sort = Sort.by("status").ascending().and(Sort.by("date").descending());
+        List<Object[]> results = this.paintWorkRepo.findAllPaintWorksAndDecorationCount();
+        List<PaintWorkDTO> paintWorkList = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm dd-MM-yyyy");
+        for (Object[] row : results) {
+            PaintWorkDTO dto = new PaintWorkDTO();
+            dto.setId((int) row[0]);
+            dto.setTitle((String) row[7]);
+            dto.setDescription((String) row[2]);
+            dto.setPrice((int) row[5]);
+            dto.setStatus((String) row[6]);
+
+            Date date = (Date) row[1];
+            String formattedDate = formatter.format(date);
+            dto.setDate(formattedDate);
+
+            dto.setYear((String) row[8]);
+            dto.setDimensionWidth((int) row[4]);
+            dto.setDimensionHeight((int) row[3]);
+            dto.setDecorationCount((long) row[9]);
+
+            paintWorkList.add(dto);
+        }
 
         return paintWorkList;
     }
@@ -95,5 +116,22 @@ public class AdminService {
         decoration.setPaintWork(paintWork);
 
         this.decorationRepo.save(decoration);
+    }
+
+    public List<PaintWorkDecorationDTO> fetchDecorationsByPaintWorkId(int paintWorkId) {
+        return this.decorationRepo.findDecorationsByPaintWorkId(paintWorkId);
+    }
+
+    public PaintWorkDecorationImageDTO getOptimizedDecorationImageById(int id) {
+        return this.decorationRepo.findOptimizedDecorationImageById(id);
+    }
+
+    public Optional<PaintWorkDecoration> findDecorationById(int id) {
+        Optional<PaintWorkDecoration> decoration = this.decorationRepo.findById(id);
+        return decoration;
+    }
+
+    public void deleteAPaintWorkById(int id) {
+        this.decorationRepo.deleteById(id);
     }
 }

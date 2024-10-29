@@ -1,8 +1,7 @@
 package com.bobby.artistweb.controller;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
-import com.bobby.artistweb.model.PaintWork;
-import com.bobby.artistweb.model.PaintWorkDecorationImageDTO;
+import com.bobby.artistweb.model.*;
 import com.bobby.artistweb.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +49,8 @@ public class AdminController {
 
     @GetMapping("/fetchPaintWorks")
     @ResponseBody
-    public ResponseEntity<List<PaintWork>> fetchPaintWorks(HttpServletRequest request) {
-
-        List<PaintWork> paintWorksList = this.adminService.fetchAllPaintWorks();
+    public ResponseEntity<List<PaintWorkDTO>> fetchPaintWorks() {
+        List<PaintWorkDTO> paintWorksList = this.adminService.fetchAllPaintWorks();
 
         return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
     }
@@ -61,22 +59,9 @@ public class AdminController {
     public ResponseEntity<byte[]> getAPaintWork(@PathVariable int id) {
         PaintWorkDecorationImageDTO decorationImageDTO = this.adminService.getPaintWorkCoverById(id);
         if (decorationImageDTO != null && decorationImageDTO.getImageData() != null) {
-            String imageType = decorationImageDTO.getImageType(); // Determine the content type based on the imageType field
 
-            MediaType mediaType;
+            MediaType mediaType = MediaType.IMAGE_JPEG;
 
-            switch (imageType.toLowerCase()) {
-                case "image/jpeg":
-                case "image:jpg":
-                    mediaType = MediaType.IMAGE_JPEG;
-                    break;
-                case "image/png":
-                    mediaType = MediaType.IMAGE_PNG;
-                    break;
-                default:
-                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
-                    break;
-            }
             HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
             headers.setContentType(mediaType);
             return new ResponseEntity<>(decorationImageDTO.getImageData(), headers, HttpStatus.OK);
@@ -86,7 +71,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/deleteAPaintWork/{id}")
-    public ResponseEntity<String> deletePaintWork(@PathVariable int id, HttpServletRequest request) {
+    public ResponseEntity<String> deletePaintWork(@PathVariable int id) {
         Optional<PaintWork> paintWork = this.adminService.findPaintWorkById(id);
         if(paintWork == null || !paintWork.isPresent()) {
             return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
@@ -109,4 +94,37 @@ public class AdminController {
         }
         return new ResponseEntity<>("success", HttpStatus.CREATED);
     }
+
+    @GetMapping("/fetchDecorations/{paintWorkId}")
+    public ResponseEntity<List<PaintWorkDecorationDTO>> fetchDecorations(@PathVariable int paintWorkId) {
+        List<PaintWorkDecorationDTO> decorationsList = this.adminService.fetchDecorationsByPaintWorkId(paintWorkId);
+        return new ResponseEntity<>(decorationsList, HttpStatus.OK);
+    }
+
+    @GetMapping("/getOptimizedDecorationImage/{id}/image")
+    public ResponseEntity<byte[]> getOptimizedDecorationImage(@PathVariable int id) {
+        PaintWorkDecorationImageDTO decorationImageDTO = this.adminService.getOptimizedDecorationImageById(id);
+        if (decorationImageDTO != null && decorationImageDTO.getImageData() != null) {
+
+            MediaType mediaType = MediaType.IMAGE_JPEG;
+
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(decorationImageDTO.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/deleteDecoration/{id}")
+    public ResponseEntity<String> deleteDecoration(@PathVariable int id) {
+        Optional<PaintWorkDecoration> decoration = this.adminService.findDecorationById(id);
+        if(decoration == null || !decoration.isPresent()) {
+            return new ResponseEntity<>("Failed", HttpStatus.NOT_FOUND);
+        } else {
+            this.adminService.deleteAPaintWorkById(id);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        }
+    }
+
 }

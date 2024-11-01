@@ -126,6 +126,10 @@ public class AdminService {
         return this.decorationRepo.findOptimizedDecorationImageById(id);
     }
 
+    public PaintWorkDecorationImageDTO getOrigionalDecorationImageById(int id) {
+        return this.decorationRepo.findOrigionalDecorationImageById(id);
+    }
+
     public Optional<PaintWorkDecoration> findDecorationById(int id) {
         Optional<PaintWorkDecoration> decoration = this.decorationRepo.findById(id);
         return decoration;
@@ -134,4 +138,6 @@ public class AdminService {
     public void deleteAPaintWorkById(int id) {
         this.decorationRepo.deleteById(id);
     }
+
+
 }

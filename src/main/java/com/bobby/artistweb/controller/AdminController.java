@@ -116,6 +116,21 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/getOrigionalDecorationImage/{id}/image")
+    public ResponseEntity<byte[]> getOrigionalDecorationImage(@PathVariable int id) {
+        PaintWorkDecorationImageDTO decorationImageDTO = this.adminService.getOrigionalDecorationImageById(id);
+        if (decorationImageDTO != null && decorationImageDTO.getImageData() != null) {
+
+            MediaType mediaType = MediaType.IMAGE_JPEG;
+
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(decorationImageDTO.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/deleteDecoration/{id}")
     public ResponseEntity<String> deleteDecoration(@PathVariable int id) {
         Optional<PaintWorkDecoration> decoration = this.adminService.findDecorationById(id);

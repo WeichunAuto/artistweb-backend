@@ -29,4 +29,8 @@ public interface PaintWorkDecorationRepo extends JpaRepository<PaintWorkDecorati
     @Transactional(readOnly = true)
     @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationImageDTO(pd.id, pd.optimizedImageData) FROM PaintWorkDecoration pd WHERE pd.id = :id")
     PaintWorkDecorationImageDTO findOptimizedDecorationImageById(@Param("id") int id);
+
+    @Transactional(readOnly = true)
+    @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationImageDTO(pd.id, pd.imageData) FROM PaintWorkDecoration pd WHERE pd.id = :id")
+    PaintWorkDecorationImageDTO findOrigionalDecorationImageById(int id);
 }

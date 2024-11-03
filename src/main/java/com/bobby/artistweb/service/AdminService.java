@@ -61,18 +61,18 @@ public class AdminService {
         for (Object[] row : results) {
             PaintWorkDTO dto = new PaintWorkDTO();
             dto.setId((int) row[0]);
-            dto.setTitle((String) row[7]);
+            dto.setTitle((String) row[1]);
             dto.setDescription((String) row[2]);
-            dto.setPrice((int) row[5]);
-            dto.setStatus((String) row[6]);
+            dto.setPrice((int) row[3]);
+            dto.setStatus((String) row[4]);
 
-            Date date = (Date) row[1];
+            Date date = (Date) row[5];
             String formattedDate = formatter.format(date);
             dto.setDate(formattedDate);
 
-            dto.setYear((String) row[8]);
-            dto.setDimensionWidth((int) row[4]);
-            dto.setDimensionHeight((int) row[3]);
+            dto.setYear((String) row[6]);
+            dto.setDimensionWidth((int) row[7]);
+            dto.setDimensionHeight((int) row[8]);
             dto.setDecorationCount((long) row[9]);
 
             paintWorkList.add(dto);

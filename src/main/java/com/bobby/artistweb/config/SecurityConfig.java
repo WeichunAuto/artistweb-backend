@@ -20,7 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +30,16 @@ public class SecurityConfig {
 
     // Set Set the validity period of the token
     public static final long TOKEN_EXPIRE_TIME_Millis = 1000*60*60;
+
+    private List<String> allowedOrigins = new ArrayList<>(
+            Arrays.asList(
+                    "http://localhost:3000",
+                    "http://192.168.18.41:3000",
+                    "http://192.168.18.41:3001",
+                    "http://localhost:3001",
+                    "http://192.168.18.41:3002",
+                    "http://localhost:3002"
+            ));
 
     @Autowired
     private ApplicationDetailsService userDetailsService;
@@ -66,7 +78,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowCredentials(true);
-        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://192.168.18.41:3000", "http://192.168.18.41:3001", "http://localhost:3001")); // add allowed origins
+        corsConfig.setAllowedOrigins(this.allowedOrigins); // add allowed origins
         corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 

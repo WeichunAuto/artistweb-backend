@@ -102,7 +102,7 @@
 
 	<build>
 
-		<finalName>artistWeb-backend</finalName>
+		<finalName>artistWeb-api</finalName>
 
 		<plugins>
 			<plugin>

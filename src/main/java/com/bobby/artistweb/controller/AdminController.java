@@ -142,4 +142,76 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/setLogoImage")
+    public ResponseEntity<String> setLogoImage(@RequestParam MultipartFile logoImage) {
+        try {
+            this.adminService.saveLogoImage(logoImage);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("success", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/fetchSavedLogo/image")
+    public ResponseEntity<byte[]> getSavedLogoImage() {
+        Logo logo = this.adminService.fetchSavedLogo();
+
+        if (logo != null && logo.getImageData() != null) {
+            String imageType = logo.getImageType();
+
+            MediaType mediaType;
+
+            switch (imageType.toLowerCase()) {
+                case "image/jpeg":
+                case "image:jpg":
+                    mediaType = MediaType.IMAGE_JPEG;
+                    break;
+                default:
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
+                    break;
+            }
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(logo.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/setForegroundImage")
+    public ResponseEntity<String> setForegroundImage(@RequestParam MultipartFile foregroundImage) {
+        try {
+            this.adminService.saveForegroundImage(foregroundImage);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("success", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/fetchSavedForegroundImage/image")
+    public ResponseEntity<byte[]> getSavedForegroundImage() {
+        ForegroundImage foregroundImage = this.adminService.fetchSavedForegroundImage();
+
+        if (foregroundImage != null && foregroundImage.getImageData() != null) {
+            String imageType = foregroundImage.getImageType();
+
+            MediaType mediaType;
+
+            switch (imageType.toLowerCase()) {
+                case "image/jpeg":
+                case "image:jpg":
+                    mediaType = MediaType.IMAGE_JPEG;
+                    break;
+                default:
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM;  // Default fallback
+                    break;
+            }
+            HttpHeaders headers = new HttpHeaders(); // Set the appropriate content type in the headers
+            headers.setContentType(mediaType);
+            return new ResponseEntity<>(foregroundImage.getImageData(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

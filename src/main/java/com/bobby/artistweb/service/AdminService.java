@@ -2,6 +2,8 @@ package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.*;
+import com.bobby.artistweb.repo.ForegroundImageRepo;
+import com.bobby.artistweb.repo.LogoRepo;
 import com.bobby.artistweb.repo.PaintWorkDecorationRepo;
 import com.bobby.artistweb.repo.PaintWorkRepo;
 import com.bobby.artistweb.utils.ImageCompressor;
@@ -26,6 +28,12 @@ public class AdminService {
 
     @Autowired
     private PaintWorkDecorationRepo decorationRepo;
+
+    @Autowired
+    private LogoRepo logoRepo;
+
+    @Autowired
+    private ForegroundImageRepo foregroundImageRepo;
 
     @Transactional
     public PaintWork addPaintWork(PaintWork paintWork, MultipartFile imageFile) throws IOException, ImageTypeDoesNotSupportException {
@@ -140,4 +148,45 @@ public class AdminService {
     }
 
 
+    public void saveLogoImage(MultipartFile logoImage) throws IOException {
+        Logo savedLogo = null;
+        if(this.logoRepo.findAll().size() == 0) {
+            savedLogo = new Logo();
+        } else {
+            savedLogo = this.logoRepo.findAll().get(0);
+        }
+        savedLogo.setImageName(logoImage.getOriginalFilename());
+        savedLogo.setImageType(logoImage.getContentType());
+        savedLogo.setImageData(logoImage.getBytes());
+        this.logoRepo.save(savedLogo);
+    }
+
+    public Logo fetchSavedLogo() {
+        Logo savedLogo = null;
+        if(this.logoRepo.findAll().size() != 0) {
+            savedLogo = this.logoRepo.findAll().get(0);
+        }
+        return savedLogo;
+    }
+
+    public void saveForegroundImage(MultipartFile foregroundImage) throws IOException {
+        ForegroundImage savedForegroundImage = null;
+        if(this.foregroundImageRepo.findAll().size() == 0) {
+            savedForegroundImage = new ForegroundImage();
+        } else {
+            savedForegroundImage = this.foregroundImageRepo.findAll().get(0);
+        }
+        savedForegroundImage.setImageName(foregroundImage.getOriginalFilename());
+        savedForegroundImage.setImageType(foregroundImage.getContentType());
+        savedForegroundImage.setImageData(foregroundImage.getBytes());
+        this.foregroundImageRepo.save(savedForegroundImage);
+    }
+
+    public ForegroundImage fetchSavedForegroundImage() {
+        ForegroundImage savedForegroundImage = null;
+        if(this.foregroundImageRepo.findAll().size() != 0) {
+            savedForegroundImage = this.foregroundImageRepo.findAll().get(0);
+        }
+        return savedForegroundImage;
+    }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaintWorkDTO {
+public class PaintWorkEditDTO {
 
     private int id = 0;
     private String title = "";
@@ -15,13 +15,7 @@ public class PaintWorkDTO {
     private int price = 0;
     private String status = "active";
 
-    private String date;
-
-    private String year ="";
-
     private int dimensionWidth = 0;
     private int dimensionHeight = 0;
-
-    private long decorationCount;
 
 }

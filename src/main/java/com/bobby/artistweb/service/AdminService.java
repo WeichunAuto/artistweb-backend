@@ -8,6 +8,7 @@ import com.bobby.artistweb.repo.PaintWorkDecorationRepo;
 import com.bobby.artistweb.repo.PaintWorkRepo;
 import com.bobby.artistweb.utils.ImageCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -188,5 +189,23 @@ public class AdminService {
             savedForegroundImage = this.foregroundImageRepo.findAll().get(0);
         }
         return savedForegroundImage;
+    }
+
+    public PaintWork updatePaintWork(PaintWorkEditDTO paintWork) {
+        Optional<PaintWork> savedPaintWork = this.paintWorkRepo.findById(paintWork.getId());
+        if (savedPaintWork.isPresent()) {
+            PaintWork existingPaintWork = savedPaintWork.get();
+
+            existingPaintWork.setTitle(paintWork.getTitle());
+            existingPaintWork.setDescription(paintWork.getDescription());
+            existingPaintWork.setPrice(paintWork.getPrice());
+            existingPaintWork.setStatus(paintWork.getStatus());
+            existingPaintWork.setDimensionWidth(paintWork.getDimensionWidth());
+            existingPaintWork.setDimensionHeight(paintWork.getDimensionHeight());
+            this.paintWorkRepo.save(existingPaintWork);
+            return existingPaintWork;
+        } else {
+            return null;
+        }
     }
 }

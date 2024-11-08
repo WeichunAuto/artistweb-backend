@@ -47,6 +47,15 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/editPaintWork")
+    public ResponseEntity<String> editPaintWork(@RequestPart(value="paintWork") PaintWorkEditDTO paintWork) {
+        if(this.adminService.updatePaintWork(paintWork) == null) {
+            return new ResponseEntity<>("failed", HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        }
+    }
+
     @GetMapping("/fetchPaintWorks")
     @ResponseBody
     public ResponseEntity<List<PaintWorkDTO>> fetchPaintWorks() {

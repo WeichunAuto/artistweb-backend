@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PaintWorkDecoration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
 
     @ManyToOne
     @JoinColumn(name = "paintWork_id", nullable = false)

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class TopicDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
     private String title = "";
 
     @Column(columnDefinition = "TEXT")

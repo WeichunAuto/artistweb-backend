@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PaintWorkDecorationDTO {
 
-    private int id = 0;
+    private long id = 0;
 
     private String imageName;
     private String imageType;

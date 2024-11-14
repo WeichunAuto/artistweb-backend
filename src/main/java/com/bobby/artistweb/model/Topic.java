@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
     private String title = "";
 
     @Column(columnDefinition = "TEXT")

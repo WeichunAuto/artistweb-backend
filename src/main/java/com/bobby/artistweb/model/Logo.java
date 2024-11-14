@@ -13,7 +13,7 @@ public class Logo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
 
     @Lob
     private byte[] imageData;

@@ -2,10 +2,7 @@ package com.bobby.artistweb.service;
 
 import com.bobby.artistweb.exception.ImageTypeDoesNotSupportException;
 import com.bobby.artistweb.model.*;
-import com.bobby.artistweb.repo.ForegroundImageRepo;
-import com.bobby.artistweb.repo.LogoRepo;
-import com.bobby.artistweb.repo.PaintWorkDecorationRepo;
-import com.bobby.artistweb.repo.PaintWorkRepo;
+import com.bobby.artistweb.repo.*;
 import com.bobby.artistweb.utils.ImageCompressor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -35,6 +32,9 @@ public class AdminService {
 
     @Autowired
     private ForegroundImageRepo foregroundImageRepo;
+
+    @Autowired
+    private MenuItemRepo menuItemRepo;
 
     @Transactional
     public PaintWork addPaintWork(PaintWork paintWork, MultipartFile imageFile) throws IOException, ImageTypeDoesNotSupportException {
@@ -69,7 +69,7 @@ public class AdminService {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm dd-MM-yyyy");
         for (Object[] row : results) {
             PaintWorkDTO dto = new PaintWorkDTO();
-            dto.setId((int) row[0]);
+            dto.setId((long) row[0]);
             dto.setTitle((String) row[1]);
             dto.setDescription((String) row[2]);
             dto.setPrice((int) row[3]);
@@ -90,17 +90,17 @@ public class AdminService {
         return paintWorkList;
     }
     @Transactional
-    public PaintWorkDecorationImageDTO getPaintWorkCoverById(int id) {
+    public PaintWorkDecorationImageDTO getPaintWorkCoverById(long id) {
         return this.decorationRepo.findCoverById(id);
     }
 
-    public Optional<PaintWork> findPaintWorkById(int id) {
+    public Optional<PaintWork> findPaintWorkById(long id) {
         Optional<PaintWork> paintWork = this.paintWorkRepo.findById(id);
         return paintWork;
     }
 
     @Transactional
-    public void deletePaintWorkById(int id) {
+    public void deletePaintWorkById(long id) {
         this.decorationRepo.deleteDecorationsByPaintWorkId(id);
         this.paintWorkRepo.deleteById(id);
     }
@@ -131,20 +131,20 @@ public class AdminService {
         return this.decorationRepo.findDecorationsByPaintWorkId(paintWorkId);
     }
 
-    public PaintWorkDecorationImageDTO getOptimizedDecorationImageById(int id) {
+    public PaintWorkDecorationImageDTO getOptimizedDecorationImageById(long id) {
         return this.decorationRepo.findOptimizedDecorationImageById(id);
     }
 
-    public PaintWorkDecorationImageDTO getOrigionalDecorationImageById(int id) {
+    public PaintWorkDecorationImageDTO getOrigionalDecorationImageById(long id) {
         return this.decorationRepo.findOrigionalDecorationImageById(id);
     }
 
-    public Optional<PaintWorkDecoration> findDecorationById(int id) {
+    public Optional<PaintWorkDecoration> findDecorationById(long id) {
         Optional<PaintWorkDecoration> decoration = this.decorationRepo.findById(id);
         return decoration;
     }
 
-    public void deleteAPaintWorkById(int id) {
+    public void deleteAPaintWorkById(long id) {
         this.decorationRepo.deleteById(id);
     }
 
@@ -206,6 +206,41 @@ public class AdminService {
             return existingPaintWork;
         } else {
             return null;
+        }
+    }
+
+    public List<MenuItem> fetchMenuItems() {
+
+        if(this.menuItemRepo.findAll().size() == 0) {
+            List<MenuItem> menuItems = new ArrayList<MenuItem>();
+            MenuItem menuItem = new MenuItem();
+            menuItem.setName("PAINTING ART.");
+            menuItem.setHref("target-paint");
+            menuItem.setDisable(false);
+            menuItems.add(menuItem);
+
+            MenuItem menuItem2 = new MenuItem();
+            menuItem2.setName("ABOUT ME.");
+            menuItem2.setHref("target-about");
+            menuItem2.setDisable(false);
+            menuItems.add(menuItem2);
+
+            MenuItem menuItem3 = new MenuItem();
+            menuItem3.setName("CONTACT.");
+            menuItem3.setHref("target-contact");
+            menuItem3.setDisable(false);
+            menuItems.add(menuItem3);
+
+            MenuItem menuItem4 = new MenuItem();
+            menuItem4.setName("SERVICES.");
+            menuItem4.setHref("target-services");
+            menuItem4.setDisable(true );
+            menuItems.add(menuItem4);
+
+            this.menuItemRepo.saveAll(menuItems);
+            return this.menuItemRepo.findByParentNull();
+        } else {
+            return this.menuItemRepo.findByParentNull();
         }
     }
 }

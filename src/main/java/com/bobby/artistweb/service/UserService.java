@@ -123,12 +123,12 @@ public class UserService {
         return topicDtos;
     }
 
-    public TopicImageDTO fetchPhotoInTopic(int id) {
+    public TopicImageDTO fetchPhotoInTopic(long id) {
         TopicImageDTO topicImage = this.topicRepo.findTopicPhotoById(id);
         return topicImage;
     }
 
-    public void deleteTopicById(int id) {
+    public void deleteTopicById(long id) {
         this.topicRepo.deleteById(id);
     }
 

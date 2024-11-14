@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface AboutMeRepo extends JpaRepository<AboutMe, Integer> {
+public interface AboutMeRepo extends JpaRepository<AboutMe, Long> {
 
     @Transactional(readOnly = true)
     @Query("SELECT am FROM AboutMe am")

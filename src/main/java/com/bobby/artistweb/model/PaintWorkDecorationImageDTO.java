@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaintWorkDecorationImageDTO {
-    private int id = 0;
+    private long id = 0;
 
     private byte[] imageData;
 

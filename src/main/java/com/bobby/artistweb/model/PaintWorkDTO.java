@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PaintWorkDTO {
 
-    private int id = 0;
+    private long id = 0;
     private String title = "";
     private String description = "";
     private int price = 0;

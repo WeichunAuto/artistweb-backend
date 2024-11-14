@@ -14,23 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface PaintWorkDecorationRepo extends JpaRepository<PaintWorkDecoration, Integer> {
+public interface PaintWorkDecorationRepo extends JpaRepository<PaintWorkDecoration, Long> {
 
     @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationImageDTO(pd.id, pd.optimizedImageData) FROM PaintWorkDecoration pd WHERE pd.paintWork.id = :id AND pd.cover=true")
-    PaintWorkDecorationImageDTO findCoverById(@Param("id") int id);
+    PaintWorkDecorationImageDTO findCoverById(@Param("id") long id);
 
     @Modifying
     @Query("Delete FROM PaintWorkDecoration pd WHERE pd.paintWork.id = :id")
-    void deleteDecorationsByPaintWorkId(@Param("id") int id);
+    void deleteDecorationsByPaintWorkId(@Param("id") long id);
 
     @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationDTO(pd.id, pd.imageName, pd.imageType, pd.cover) FROM PaintWorkDecoration pd WHERE pd.paintWork.id = :id")
-    List<PaintWorkDecorationDTO> findDecorationsByPaintWorkId(@Param("id") int id);
+    List<PaintWorkDecorationDTO> findDecorationsByPaintWorkId(@Param("id") long id);
 
     @Transactional(readOnly = true)
     @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationImageDTO(pd.id, pd.optimizedImageData) FROM PaintWorkDecoration pd WHERE pd.id = :id")
-    PaintWorkDecorationImageDTO findOptimizedDecorationImageById(@Param("id") int id);
+    PaintWorkDecorationImageDTO findOptimizedDecorationImageById(@Param("id") long id);
 
     @Transactional(readOnly = true)
     @Query("Select new com.bobby.artistweb.model.PaintWorkDecorationImageDTO(pd.id, pd.imageData) FROM PaintWorkDecoration pd WHERE pd.id = :id")
-    PaintWorkDecorationImageDTO findOrigionalDecorationImageById(int id);
+    PaintWorkDecorationImageDTO findOrigionalDecorationImageById(long id);
 }

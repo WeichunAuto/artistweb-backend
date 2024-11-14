@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface TopicRepo  extends JpaRepository<Topic, Integer> {
+public interface TopicRepo  extends JpaRepository<Topic, Long> {
 
     @Transactional(readOnly = true)
     @Query("SELECT new com.bobby.artistweb.model.TopicDTO(t.id, t.title, t.description) FROM Topic t")
@@ -20,5 +20,5 @@ public interface TopicRepo  extends JpaRepository<Topic, Integer> {
 
     @Transactional(readOnly = true)
     @Query("Select new com.bobby.artistweb.model.TopicImageDTO(t.optimizedImageName, t.optimizedImageType, t.optimizedImageData) FROM Topic t WHERE t.id = :id")
-    TopicImageDTO findTopicPhotoById(@Param("id") int id);
+    TopicImageDTO findTopicPhotoById(@Param("id") long id);
 }

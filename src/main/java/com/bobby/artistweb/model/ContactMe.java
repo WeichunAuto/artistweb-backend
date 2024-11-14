@@ -16,7 +16,7 @@ import java.util.Date;
 public class ContactMe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
     private String firstName = "";
     private String lastName = "";
     private String email = "";

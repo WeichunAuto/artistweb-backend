@@ -223,4 +223,10 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/getMenuItems")
+    public ResponseEntity<List<MenuItem>> getMenuItems() {
+        List<MenuItem> menuItems = this.adminService.fetchMenuItems();
+        return new ResponseEntity<>(menuItems, HttpStatus.OK);
+    }
+
 }

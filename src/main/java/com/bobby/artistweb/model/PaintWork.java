@@ -16,7 +16,7 @@ import java.util.List;
 public class PaintWork {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id = 0;
+    private long id = 0;
 
     private String title = "";
 

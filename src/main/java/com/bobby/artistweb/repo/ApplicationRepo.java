@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApplicationRepo extends JpaRepository<Applications, Integer> {
+public interface ApplicationRepo extends JpaRepository<Applications, Long> {
 
     Applications findByAppName(String appName);
 }

@@ -37,7 +37,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        boolean isValidToken = false;
         String authHeader = request.getHeader("Authorization");
         String jwtToken = null;
         String username = null;
@@ -47,11 +46,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 jwtToken = authHeader.substring(7);
                 username = this.jwtService.extractAppName(jwtToken);
             } catch(SignatureException e) {
-                isValidToken = false;
                 System.out.println("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
                 this.returnTokenInvalidResponse(response, "JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
             } catch(ExpiredJwtException e) {
-                isValidToken = false;
                 System.out.println("JWT is expired.");
                 this.returnTokenInvalidResponse(response, "JWT is expired.");
             }
@@ -67,15 +64,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                   isValidToken = true;
                 }
             } catch (SignatureException e) {
-                isValidToken = false;
                 System.out.println("Invalid JWT signature");
                 this.returnTokenInvalidResponse(response, "Invalid JWT signature.");
             }
         }
-        request.setAttribute("isValidToken", isValidToken);
+
+        if ((authHeader == null || !authHeader.startsWith("Bearer ")) && request.getMethod().equalsIgnoreCase("OPTIONS") == false) { //Allow options requests to pass
+            if(request.getRequestURI().endsWith("users/login") == false) {
+                this.returnTokenInvalidResponse(response, "In order to access, please carry a valid token!");
+                return;
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
 

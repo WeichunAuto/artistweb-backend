@@ -62,9 +62,9 @@ public class AdminService {
         return savedPaintWork;
     }
 
-    public List<PaintWorkDTO> fetchAllPaintWorks() {
+    public List<PaintWorkDTO> fetchPaintWorksPagination(int pageSize, int pageNum) {
 //        Sort sort = Sort.by("status").ascending().and(Sort.by("date").descending());
-        List<Object[]> results = this.paintWorkRepo.findAllPaintWorksAndDecorationCount();
+        List<Object[]> results = this.paintWorkRepo.findAllPaintWorksAndDecorationCount(pageSize, pageNum);
         List<PaintWorkDTO> paintWorkList = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm dd-MM-yyyy");
         for (Object[] row : results) {
@@ -83,6 +83,7 @@ public class AdminService {
             dto.setDimensionWidth((int) row[7]);
             dto.setDimensionHeight((int) row[8]);
             dto.setDecorationCount((long) row[9]);
+            dto.setCoverURL("");
 
             paintWorkList.add(dto);
         }
@@ -241,6 +242,16 @@ public class AdminService {
             return this.menuItemRepo.findByParentNull();
         } else {
             return this.menuItemRepo.findByParentNull();
+        }
+    }
+
+
+    public int fetchMaxPageNum(int pageSize) {
+        int totalRecords = Integer.parseInt(String.valueOf(this.paintWorkRepo.count()));
+        if(totalRecords % pageSize == 0) {
+            return totalRecords / pageSize;
+        } else {
+            return (totalRecords / pageSize) +1;
         }
     }
 }

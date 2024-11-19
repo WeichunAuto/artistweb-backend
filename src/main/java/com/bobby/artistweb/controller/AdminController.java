@@ -56,12 +56,18 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/fetchPaintWorks")
+    @GetMapping("/fetchPaintWorks/{pageSize}/{pageNum}")
     @ResponseBody
-    public ResponseEntity<List<PaintWorkDTO>> fetchPaintWorks() {
-        List<PaintWorkDTO> paintWorksList = this.adminService.fetchAllPaintWorks();
+    public ResponseEntity<List<PaintWorkDTO>> fetchPaintWorks(@PathVariable int pageSize, @PathVariable int pageNum) {
+        List<PaintWorkDTO> paintWorksList = this.adminService.fetchPaintWorksPagination(pageSize, pageNum);
 
         return new ResponseEntity<>(paintWorksList, HttpStatus.OK);
+    }
+
+    @GetMapping("/fetchMaxPageNum/{pageSize}")
+    public ResponseEntity<Integer> fetchMaxPageNum(@PathVariable int pageSize) {
+        int maxPageNum = this.adminService.fetchMaxPageNum(pageSize);
+        return new ResponseEntity<>(maxPageNum, HttpStatus.OK);
     }
 
     @GetMapping("/getPaintWorkCover/{id}/image")

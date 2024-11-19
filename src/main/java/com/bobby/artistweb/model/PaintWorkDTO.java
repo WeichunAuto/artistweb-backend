@@ -24,4 +24,6 @@ public class PaintWorkDTO {
 
     private long decorationCount;
 
+    private String coverURL = "";
+
 }

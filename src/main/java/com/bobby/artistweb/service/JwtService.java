@@ -29,7 +29,7 @@ public class JwtService {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey secretKeyBeforeEncode = keyGen.generateKey();
-            System.out.println(secretKeyBeforeEncode.toString());
+//            System.out.println(secretKeyBeforeEncode.toString());
 
             // base64 encode
             this.secretKey =  Base64.getEncoder().encodeToString(secretKeyBeforeEncode.getEncoded());
